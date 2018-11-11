@@ -1,9 +1,9 @@
 package wm.gold.dream.dao;
 
-import com.gold.dream.entity.Blog;
-import com.gold.dream.entity.Post;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
+import wm.gold.dream.entity.Blog;
+import wm.gold.dream.entity.Post;
 
 /**
  * @Author: wangmeng

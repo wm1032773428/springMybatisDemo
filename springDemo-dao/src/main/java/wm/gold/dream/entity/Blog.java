@@ -1,6 +1,7 @@
 package wm.gold.dream.entity;
 
-import com.gold.dream.bean.Color;
+
+import wm.gold.dream.bean.Color;
 
 import java.io.Serializable;
 import java.util.Date;
