@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--注册解析@Autowired等注解的处理器包括 AutowiredAnnotationBeanPostProcessor， CommonAnnotationBeanPostProcessor， -->
+    <!--PersistenceAnnotationBeanPostProcessor，RequiredAnnotationBeanPostProcessor-->
+    <context:annotation-config/>
+    <!--处理@Component等注解，注册到容器中-->
+    <context:component-scan base-package="wm.gold.dream"/>
+
+    <!--此外，当您使用component-scan元素时，隐式包含
+    AutowiredAnnotationBeanPostProcessor和 CommonAnnotationBeanPostProcessor。
+    这意味着这两个组件是自动检测并连接在一起的 - 所有这些都没有在XML中提供任何bean配置元数据。-->
+
+
+</beans>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--实例工厂方法进行实例化-->
+    <bean id="account1"
+          class="wm.gold.dream.ioc.instantiation.AccountStaticFactory"
+          factory-method="createInstance">
+        <property name="id" value="123"></property>
+        <property name="name" value="wangmeng"></property>
+        <property name="sex" value="man"></property>
+        <property name="age" value="18"></property>
+        <property name="address" ref="address"></property>
+    </bean>
+
+    <bean id="account2" class="wm.gold.dream.ioc.instantiation.AccountStaticFactory"
+          factory-method="createInstance">
+        <constructor-arg index="0" value="123"></constructor-arg>
+        <constructor-arg index="1" value="wangmeng"></constructor-arg>
+        <constructor-arg index="2" value="man"></constructor-arg>
+        <constructor-arg index="3" value="18"></constructor-arg>
+        <constructor-arg index="4" ref="address"></constructor-arg>
+    </bean>
+
+    <bean id="address" class="wm.gold.dream.ioc.instantiation.Address"></bean>
+
+    <!--静态工厂方法实例化-->
+    <bean id="account3"
+          factory-bean="accountNoStaticFactory"
+          factory-method="createInstance">
+        <property name="id" value="123"></property>
+        <property name="name" value="wangmeng"></property>
+        <property name="sex" value="man"></property>
+        <property name="age" value="18"></property>
+        <property name="address" ref="address"></property>
+    </bean>
+
+    <bean id="accountNoStaticFactory" class="wm.gold.dream.ioc.instantiation.AccountNoStaticFactory"></bean>
+
+    <bean id="account4" factory-bean="accountNoStaticFactory"
+          factory-method="createInstance">
+        <constructor-arg index="0" value="123"></constructor-arg>
+        <constructor-arg index="1" value="wangmeng"></constructor-arg>
+        <constructor-arg index="2" value="man"></constructor-arg>
+        <constructor-arg index="3" value="18"></constructor-arg>
+        <constructor-arg index="4" ref="address"></constructor-arg>
+    </bean>
+
+    <!--基于构造函数的依赖注入-->
+    <bean id="account5" class="wm.gold.dream.ioc.instantiation.Account">
+        <constructor-arg name="address" ref="address"></constructor-arg>
+        <constructor-arg name="age" value="18"></constructor-arg>
+        <constructor-arg name="id" value="123"></constructor-arg>
+        <constructor-arg name="name" value="wangmeng"></constructor-arg>
+        <constructor-arg name="sex" value="man"></constructor-arg>
+    </bean>
+    <bean id="account6" class="wm.gold.dream.ioc.instantiation.Account">
+        <constructor-arg index="4" ref="address"></constructor-arg>
+        <constructor-arg index="3" value="18"></constructor-arg>
+        <constructor-arg index="0" value="123"></constructor-arg>
+        <constructor-arg index="1" value="wangmeng"></constructor-arg>
+        <constructor-arg index="2" value="man"></constructor-arg>
+    </bean>
+    <!--c命名空间进行更简洁的XML配置,及时发现拼写错误。强烈建议使用此类IDE帮助。-->
+    <!--beans本章中讨论的配置格式在XML Schema文档中定义。但是，p-namespace未在XSD文件中定义，仅存在于Spring的核心中。-->
+    <bean id="account7" class="wm.gold.dream.ioc.instantiation.Account"
+          c:address-ref="address"
+          c:age="18"
+          c:id="123"
+          c:name="wangmeng"
+          c:sex="man">
+    </bean>
+    <bean id="account8" class="wm.gold.dream.ioc.instantiation.Account"
+          c:_4-ref="address"
+          c:_3="18"
+          c:_0="123"
+          c:_1="wangmeng"
+          c:_2="man">
+    </bean>
+
+    <!--基于Setter的依赖注入，能够防止循环依赖-->
+    <bean id="account9" class="wm.gold.dream.ioc.instantiation.Account">
+        <property name="id" value="123"></property>
+        <property name="name" value="wangmeng"></property>
+        <property name="sex" value="man"></property>
+        <property name="age" value="18"></property>
+        <property name="address" ref="address"></property>
+    </bean>
+    <!--带有p命名空间的XML快捷方式-->
+    <bean id="account10" class="wm.gold.dream.ioc.instantiation.Account"
+          p:address-ref="address"
+          p:age="18"
+          p:id="123"
+          p:name="wangmeng"
+          p:sex="man">
+    </bean>
+</beans>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--Lookup的使用-->
+    <!--解决问题：生命周期不同的bean如何依赖，比如单例依赖多例，首先不能注入了-->
+    <!--这时候spring会使用CGLIB生成代理-->
+    <bean id="commandManager" class="wm.gold.dream.ioc.other.CommandManager">
+        <lookup-method name="createCommand" bean="account17"></lookup-method>
+    </bean>
+    <bean id="account17" class="wm.gold.dream.ioc.other.Account" scope="prototype"/>
+
+    <!--replaced-method-->
+    <!--被代理方法的类-->
+    <bean id="myValueCalculator" class="wm.gold.dream.ioc.other.MyValueCalculator">
+        <replaced-method name="computeValue" replacer="replacementComputeValue">
+            <!--仅当方法重载且类中存在多个变体时，才需要参数的签名-->
+            <arg-type>String</arg-type>
+        </replaced-method>
+    </bean>
+    <!--代理方法的类-->
+    <bean id="replacementComputeValue" class="wm.gold.dream.ioc.other.ReplacementComputeValue"/>
+
+
+    <!--别名-->
+    <bean id="account" name="account3,account4" class="wm.gold.dream.ioc.other.Account"></bean>
+    <alias name="account1" alias="account2"/>
+    <alias name="account" alias="account1"/>
+
+
+    <!--运用depends-on显示的指定先后实例化顺序-->
+    <!--如果bean是另一个bean的依赖项，那通常意味着将一个bean设置为另一个bean的属性。通常，您可以使用基于XML的配置元数据中的<ref/> 元素来完成此操作。但是，有时bean之间的依赖关系不那么直接。例如，需要触发类中的静态初始化程序，例如数据库驱动程序注册。depends-on在初始化使用此元素的bean之前，该属性可以显式强制初始化一个或多个bean。以下示例使用该depends-on属性表示对单个bean的依赖关系：-->
+    <bean id="account15" class="wm.gold.dream.ioc.other.Account" depends-on="address2,address3"/>
+    <bean id="address2" class="wm.gold.dream.ioc.other.Address" scope="prototype"/>
+    <bean id="address3" class="wm.gold.dream.ioc.other.Address" scope="prototype"/>
+
+    <!--如果延迟初始化的bean被其他的非延迟bean依赖,那么延迟无效-->
+    <bean id="account16" class="wm.gold.dream.ioc.other.Account" lazy-init="true"/>
+
+
+    <!--如果要将HTTP请求范围的bean注入（例如）另一个具有较长寿命范围的bean，则可以选择注入AOP代理来代替范围内的bean。-->
+    <bean id="userPreferences" class="wm.gold.dream.ioc.other.Address" scope="prototype">
+        <aop:scoped-proxy/>
+        <!--以便为此类作用域bean创建基于JDK接口的标准代理。使用基于JDK接口的代理意味着您不需要在应用程序类路径中使用其他库来影响此类代理。但是，它还意味着scoped bean的类必须至少实现一个接口-->
+        <!--<aop:scoped-proxy proxy-target-class="false"/>-->
+    </bean>
+    <bean id="userService" class="wm.gold.dream.ioc.other.Account" scope="singleton">
+        <!-- a reference to the proxied userPreferences bean -->
+        <property name="address" ref="userPreferences"/>
+    </bean>
+
+    <!--PropertyPlaceholderConfigurer属性文件读取-->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations" value="classpath:jdbc.properties"/>
+        <property name="systemPropertiesMode" value="0"/>
+    </bean>
+    <!--等价于<context:property-placeholder location="classpath:jdbc.properties"/>-->
+    <bean id="dataSource1" class="wm.gold.dream.ioc.other.BasicDataSource">
+        <property name="driverClassName" value="${jdbc.driverClassName}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+    <bean id="myFactoryBean" class="wm.gold.dream.ioc.other.MyFactoryBean"/>
+
+</beans>

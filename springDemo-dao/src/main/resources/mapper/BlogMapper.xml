@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gold.dream.dao.BlogMapper">
+
+
+    <resultMap type="com.gold.dream.entity.Blog" id="resultBlogMap">
+        <id column="id" property="id"/>
+        <result column="enum_index" property="enumIndex" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+        <result column="enum_name" property="enumName" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+        <result column="enum_value" property="enumValue" typeHandler="com.gold.dream.typeHandler.EnumValueTypeHandler"/>
+        <result column="name" property="name"/>
+        <result column="create_date" property="createDate" typeHandler="com.gold.dream.typeHandler.DateTypeHandler"/>
+    </resultMap>
+
+    <select id="selectBlogById" resultMap="resultBlogMap">
+      select * from Blog where id = #{id}
+    </select>
+
+    <!--MyBatis 会在幕后自动创建一个 ResultMap，再基于属性名来映射列到 JavaBean 的属性上。-->
+    <select id="selectBlogById2" resultType="com.gold.dream.entity.Blog">
+      select * from Blog where id = #{id}
+    </select>
+
+    <!--如果你的数据库支持自动生成主键的字段,可以设置 useGeneratedKeys=”true”-->
+    <insert id="insert" parameterType="com.gold.dream.entity.Blog" useGeneratedKeys="true" keyProperty="id"
+            keyColumn="id">
+	    insert into Blog (enum_index, enum_name, enum_value,name,create_date) values (
+	    	#{enumIndex,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
+	    	#{enumName,typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+	    	#{enumValue,typeHandler=com.gold.dream.typeHandler.EnumValueTypeHandler},
+	    	#{name},
+	    	#{createDate, typeHandler=com.gold.dream.typeHandler.DateTypeHandler}
+	    )
+	</insert>
+    <!--对于不支持自动生成类型的数据库或可能不支持自动生成主键的 JDBC 驱动，MyBatis 有另外一种方法来生成主键。-->
+    <insert id="insert2" parameterType="com.gold.dream.entity.Blog" useGeneratedKeys="true" keyProperty="id"
+            keyColumn="id">
+        <selectKey keyProperty="id" keyColumn="id" resultType="long" order="BEFORE">
+            select max(id)+1 a from blog
+        </selectKey>
+        insert into Blog (id,enum_index, enum_name, enum_value,name,create_date) values (
+        #{id},
+        #{enumIndex,typeHandler=org.apache.ibatis.type.EnumOrdinalTypeHandler},
+        #{enumName,typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+        #{enumValue,typeHandler=com.gold.dream.typeHandler.EnumValueTypeHandler},
+        #{name},
+        #{createDate, typeHandler=com.gold.dream.typeHandler.DateTypeHandler}
+        )
+    </insert>
+
+
+    <!--嵌套子查询-->
+
+    <resultMap type="com.gold.dream.entity.Blog" id="resultBlogMap3">
+        <id column="id" property="id"/>
+        <result column="enum_index" property="enumIndex" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+        <result column="enum_name" property="enumName" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+        <result column="enum_value" property="enumValue" typeHandler="com.gold.dream.typeHandler.EnumValueTypeHandler"/>
+        <result column="name" property="name"/>
+        <result column="create_date" property="createDate" typeHandler="com.gold.dream.typeHandler.DateTypeHandler"/>
+        <association property="author" column="author_id" javaType="Author" select="selectAuthorById"/>
+    </resultMap>
+
+    <select id="selectAuthorById" resultType="com.gold.dream.entity.Author">
+      select * from Author where id = #{id}
+    </select>
+
+
+    <select id="selectBlogById3" resultMap="resultBlogMap3">
+      select * from Blog where id = #{id}
+    </select>
+
+    <!--级联查询-->
+
+    <resultMap type="com.gold.dream.entity.Blog" id="resultBlogMap4">
+        <id column="id" property="id"/>
+        <result column="enum_index" property="enumIndex" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+        <result column="enum_name" property="enumName" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+        <result column="enum_value" property="enumValue" typeHandler="com.gold.dream.typeHandler.EnumValueTypeHandler"/>
+        <result column="name" property="name"/>
+        <result column="create_date" property="createDate" typeHandler="com.gold.dream.typeHandler.DateTypeHandler"/>
+        <association property="author" javaType="Author">
+            <id property="id" column="author_id"/>
+            <result property="username" column="author_username"/>
+            <result property="password" column="author_password"/>
+            <result property="email" column="author_email"/>
+            <result property="bio" column="author_bio"/>
+        </association>
+    </resultMap>
+
+    <select id="selectBlogById4" resultMap="resultBlogMap4">
+       select
+          B.id            as id,
+          B.author_id     as author_id,
+          A.username      as author_username,
+          A.password      as author_password,
+          A.email         as author_email,
+          A.bio           as author_bio
+          from Blog B left outer join Author A on B.author_id = A.id
+          where B.id = #{id}
+    </select>
+
+    <!--级联查询-->
+
+    <resultMap type="com.gold.dream.entity.Blog" id="resultBlogMap5">
+        <id column="id" property="id"/>
+        <result column="enum_index" property="enumIndex" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+        <result column="enum_name" property="enumName" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+        <result column="enum_value" property="enumValue" typeHandler="com.gold.dream.typeHandler.EnumValueTypeHandler"/>
+        <result column="name" property="name"/>
+        <result column="create_date" property="createDate" typeHandler="com.gold.dream.typeHandler.DateTypeHandler"/>
+        <association property="author" resultMap="authorResultMap" columnPrefix="co_"></association>
+    </resultMap>
+
+    <resultMap id="authorResultMap" type="com.gold.dream.entity.Author">
+        <id property="id" column="author_id"/>
+        <result property="username" column="author_username"/>
+        <result property="password" column="author_password"/>
+        <result property="email" column="author_email"/>
+        <result property="bio" column="author_bio"/>
+    </resultMap>
+
+    <select id="selectBlogById5" resultMap="resultBlogMap5">
+       select
+          B.id            as id,
+          B.author_id     as co_author_id,
+          A.username      as co_author_username,
+          A.password      as co_author_password,
+          A.email         as co_author_email,
+          A.bio           as co_author_bio
+          from Blog B left outer join Author A on B.author_id = A.id
+          where B.id = #{id}
+    </select>
+
+    <!--集合子查询-->
+    <resultMap id="resultBlogMap6" type="com.gold.dream.entity.Blog">
+        <collection property="postList" javaType="ArrayList" column="id" ofType="com.gold.dream.entity.Post" select="selectPostsForBlog"/>
+    </resultMap>
+
+    <select id="selectBlogById6" resultMap="resultBlogMap6">
+      SELECT * FROM BLOG WHERE ID = #{id}
+    </select>
+
+    <select id="selectPostsForBlog" resultType="com.gold.dream.entity.Post">
+      SELECT * FROM POST WHERE blog_id = #{id}
+    </select>
+
+    <!--集合的嵌套结果-->
+    <select id="selectBlogById7" resultMap="resultBlogMap7">
+      select
+      B.id as blog_id,
+      P.id as post_id,
+      P.subject as post_subject,
+      P.draft as post_draft
+      from Blog B left outer join Post P on B.id = P.blog_id
+      where B.id = #{id}
+    </select>
+
+    <resultMap id="resultBlogMap7" type="com.gold.dream.entity.Blog">
+        <id property="id" column="blog_id" />
+        <collection property="postList" javaType="ArrayList" ofType="com.gold.dream.entity.Post">
+            <id property="id" column="post_id"/>
+            <result property="subject" column="post_subject"/>
+            <result property="draft" column="post_draft"/>
+        </collection>
+    </resultMap>
+
+
+
+
+
+    <!--鉴别器,父子类属性都在一张表,查询直接得到子类-->
+
+    <select id="selectBlogById8" resultMap="resultBlogMap8">
+       SELECT * FROM POST WHERE id = #{id}
+    </select>
+
+    <resultMap type="com.gold.dream.entity.Post" id="resultBlogMap8">
+        <!--父类共同属性-->
+        <id column="id" property="id"/>
+        <!--子类各自属性-->
+        <discriminator javaType="int" column="draft">
+            <case value="1" resultType="com.gold.dream.entity.Post1">
+                <result property="subject" column="subject"/>
+            </case>
+            <case value="0" resultType="com.gold.dream.entity.Post2">
+                <result property="subject" column="subject"/>
+            </case>
+        </discriminator>
+    </resultMap>
+
+
+    <!--自动映射-->
+    <!--通常数据库列使用大写单词命名，单词间用下划线分隔；而java属性一般遵循驼峰命名法。 为了在这两种命名方式之间启用自动映射，需要将 mapUnderscoreToCamelCase设置为true。-->
+    <!--有三种自动映射等级：-->
+
+    <!--NONE - 禁用自动映射。仅设置手动映射属性。-->
+    <!--PARTIAL - 将自动映射结果除了那些有内部定义内嵌结果映射的(joins).-->
+    <!--FULL - 自动映射所有。-->
+    <!--默认值是PARTIAL，这是有原因的。当使用FULL时，自动映射会在处理join结果时执行，并且join取得若干相同行的不同实体数据，因此这可能导致非预期的映射。下面的例子将展示这种风险：-->
+    <!--在结果中Blog和Author均将自动映射。但是注意Author有一个id属性，在ResultSet中有一个列名为id， 所以Author的id将被填充为Blog的id，这不是你所期待的。所以需要谨慎使用FULL。-->
+    <!--<resultMap id="userResultMap" type="User" autoMapping="false">-->
+        <!--<result property="password" column="hashed_password"/>-->
+    <!--</resultMap>-->
+
+    <update id="updateBlogById" parameterType="string">
+        update blog set name = #{name}
+    </update>
+
+<!--二级缓存默认特性-->
+    <!--映射语句文件中的所有 select 语句将会被缓存。-->
+    <!--映射语句文件中的所有 insert,update 和 delete 语句会刷新缓存。-->
+    <!--缓存会使用 Least Recently Used(LRU,最近最少使用的)算法来收回。-->
+    <!--根据时间表(比如 no Flush Interval,没有刷新间隔), 缓存不会以任何时间顺序 来刷新。-->
+    <!--缓存会存储列表集合或对象(无论查询方法返回什么)的 1024 个引用。-->
+    <!--缓存会被视为是 read/write(可读/可写)的缓存,只读的缓存会给所有调用者返回缓 存对象的相同实例。因此这些对象不能被修改。这提供了很重要的性能优势。可读写的缓存 会返回缓存对象的拷贝(通过序列化) 。这会慢一些,但是安全,因此默认是 false。-->
+    <cache eviction="FIFO"
+           flushInterval="60000"
+           size="512"
+           readOnly="false"/>
+
+    <!--useCache="true" flushCache="true"-->
+    <!--如果你想改 变默认的行为,只能设置 flushCache 和 useCache 属性-->
+    <!--缓存被事务包装了,只有提交事务,数据才能从本地map中真正的同步到二级缓存中-->
+</mapper>

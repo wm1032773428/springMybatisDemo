@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <bean id="account1" class="wm.gold.dream.ioc.injection.Account">
+        <property name="properties">
+            <value>
+                jdbc.driver.className=com.mysql.jdbc.Driver
+                jdbc.url=jdbc:mysql://localhost:3306/mydb
+            </value>
+        </property>
+        <!--Inner Beans-->
+        <property name="address">
+            <bean class="wm.gold.dream.ioc.injection.Address"></bean>
+        </property>
+    </bean>
+
+
+    <!--集合-->
+    <bean id="collectionsBean" class="wm.gold.dream.ioc.injection.CollectionsBean">
+        <!-- results in a setAdminEmails(java.util.Properties) call -->
+        <property name="properties">
+            <props>
+                <prop key="administrator">administrator@example.org</prop>
+                <prop key="support">support@example.org</prop>
+                <prop key="development">development@example.org</prop>
+            </props>
+        </property>
+        <!-- results in a setSomeList(java.util.List) call -->
+        <property name="list">
+            <list>
+                <value>a list element followed by a reference</value>
+                <ref bean="account1"/>
+            </list>
+        </property>
+        <!-- results in a setSomeMap(java.util.Map) call -->
+        <property name="map">
+            <map>
+                <entry key="an entry" value="just some string"/>
+                <entry key="a ref" value-ref="account1"/>
+            </map>
+        </property>
+        <!-- results in a setSomeSet(java.util.Set) call -->
+        <property name="set">
+            <set>
+                <value>just some string</value>
+                <ref bean="account1"/>
+            </set>
+        </property>
+    </bean>
+
+    <!--集合合并parent属性的使用-->
+    <bean id="parent" abstract="true" class="wm.gold.dream.ioc.injection.CollectionsBean">
+        <property name="properties">
+            <props>
+                <prop key="administrator">administrator@example.com</prop>
+                <prop key="support">support@example.com</prop>
+            </props>
+        </property>
+    </bean>
+    <!--带有class-->
+    <bean id="child1" parent="parent" class="wm.gold.dream.ioc.injection.ChildCollectionBean">
+        <property name="properties">
+            <props merge="true">
+                <prop key="sales">sales@example.com</prop>
+                <prop key="support">support@example.co.uk</prop>
+            </props>
+        </property>
+    </bean>
+    <!--不带有class-->
+    <bean id="child2" parent="parent">
+        <property name="properties">
+            <props merge="true">
+                <prop key="sales">sales@example.com</prop>
+                <prop key="support">support@example.co.uk</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!--收集容器中所有的bean注入map属性-->
+    <bean id="account2" class="wm.gold.dream.ioc.injection.Account"/>
+    <bean id="autowireByTypeAccountBean" class="wm.gold.dream.ioc.injection.AutowireByTypeAccountBean"
+          autowire="byType"/>
+
+
+    <!--Bean定义继承 parent属性-->
+    <bean id="inheritedTestBeanWithoutClass" abstract="true">
+        <property name="name" value="parent"/>
+        <property name="age" value="1"/>
+    </bean>
+
+    <bean id="inheritsWithClass" class="wm.gold.dream.ioc.injection.Account"
+          parent="inheritedTestBeanWithoutClass">
+        <property name="name" value="override"/>
+    </bean>
+</beans>

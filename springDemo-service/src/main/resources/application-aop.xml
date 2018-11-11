@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <bean id="aspect1" class="wm.gold.dream.aop.Aspect1"></bean>
+    <aop:config>
+        <aop:aspect id="myAspect" ref="aspect1">
+            <aop:pointcut id="businessService" expression="execution(* wm.gold.dream.aop.service.*.*(..)) and @annotation(wm.gold.dream.aop.service.servicechild.MethodAOP)"/>
+            <aop:before pointcut-ref="businessService" method="testPointcut1"/>
+            <aop:after-returning pointcut-ref="businessService" method="testPointcut1"/>
+            <aop:after-returning pointcut-ref="businessService" returning="retVal" method="testPointcut18"/>
+            <aop:after-throwing pointcut-ref="businessService" method="testPointcut1"/>
+            <aop:after-throwing pointcut-ref="businessService" throwing="e" method="testPointcut19"/>
+            <aop:after pointcut-ref="businessService" method="testPointcut1"/>
+            <aop:around pointcut-ref="businessService" method="testPointcut1"/>
+        </aop:aspect>
+    </aop:config>
+
+    <!--介引-->
+    <!--<aop:config>-->
+        <!--<aop:aspect id="usageTrackerAspect" ref="usageTracking">-->
+            <!--<aop:declare-parents-->
+                    <!--types-matching="wm.gold.dream.aop.*+"-->
+                    <!--implement-interface="wm.gold.dream.aop.UsageTracked"-->
+                    <!--default-impl="wm.gold.dream.aop.DefaultUsageTracked"/>-->
+            <!--<aop:before-->
+                    <!--pointcut="com.gold.dream.aop.SystemArchitecture.businessService()-->
+                <!--and this(usageTracked)"-->
+                    <!--method="recordUsage"/>-->
+        <!--</aop:aspect>-->
+    <!--</aop:config>-->
+
+</beans>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gold.dream.dao.AuthorMapper">
+
+
+
+
+
+
+
+
+
+
+
+    <!--动态 SQL-->
+
+    <!--if-->
+    <!--<select id="findActiveBlogLike"-->
+            <!--resultType="Blog">-->
+        <!--SELECT * FROM BLOG WHERE state = ‘ACTIVE’-->
+        <!--<if test="title != null">-->
+            <!--AND title like #{title}-->
+        <!--</if>-->
+        <!--<if test="author != null and author.name != null">-->
+            <!--AND author_name like #{author.name}-->
+        <!--</if>-->
+    <!--</select>-->
+
+    <!--choose, when, otherwise-->
+    <!--<select id="findActiveBlogLike"-->
+            <!--resultType="Blog">-->
+        <!--SELECT * FROM BLOG WHERE state = ‘ACTIVE’-->
+        <!--<choose>-->
+            <!--<when test="title != null">-->
+                <!--AND title like #{title}-->
+            <!--</when>-->
+            <!--<when test="author != null and author.name != null">-->
+                <!--AND author_name like #{author.name}-->
+            <!--</when>-->
+            <!--<otherwise>-->
+                <!--AND featured = 1-->
+            <!--</otherwise>-->
+        <!--</choose>-->
+    <!--</select>-->
+
+    <!--trim, where, set-->
+    <!--<select id="findActiveBlogLike"-->
+            <!--resultType="Blog">-->
+        <!--SELECT * FROM BLOG-->
+        <!--<where>-->
+            <!--<if test="state != null">-->
+                <!--state = #{state}-->
+            <!--</if>-->
+            <!--<if test="title != null">-->
+                <!--AND title like #{title}-->
+            <!--</if>-->
+            <!--<if test="author != null and author.name != null">-->
+                <!--AND author_name like #{author.name}-->
+            <!--</if>-->
+        <!--</where>-->
+    <!--</select>-->
+    <!--where 元素只会在至少有一个子元素的条件返回 SQL 子句的情况下才去插入“WHERE”子句。而且，若语句的开头为“AND”或“OR”，where 元素也会将它们去除。-->
+
+    <!--如果 where 元素没有按正常套路出牌，我们可以通过自定义 trim 元素来定制 where 元素的功能。比如，和 where 元素等价的自定义 trim 元素为：-->
+    <!--<trim prefix="WHERE" prefixOverrides="AND |OR ">-->
+        <!--...-->
+    <!--</trim>-->
+
+    <!--类似的用于动态更新语句的解决方案叫做 set。set 元素可以用于动态包含需要更新的列，而舍去其它的。比如：-->
+    <!--<update id="updateAuthorIfNecessary">-->
+        <!--update Author-->
+        <!--<set>-->
+            <!--<if test="username != null">username=#{username},</if>-->
+            <!--<if test="password != null">password=#{password},</if>-->
+            <!--<if test="email != null">email=#{email},</if>-->
+            <!--<if test="bio != null">bio=#{bio}</if>-->
+        <!--</set>-->
+        <!--where id=#{id}-->
+    <!--</update>-->
+
+    <!--foreach-->
+    <!--<select id="selectPostIn" resultType="domain.blog.Post">-->
+        <!--SELECT *-->
+        <!--FROM POST P-->
+        <!--WHERE ID in-->
+        <!--<foreach item="item" index="index" collection="list"-->
+                 <!--open="(" separator="," close=")">-->
+            <!--#{item}-->
+        <!--</foreach>-->
+    <!--</select>-->
+</mapper>
